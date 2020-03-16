@@ -102,3 +102,32 @@ $ kubectl describe svc http
 
 $ curl http://172.17.0.60:8000
 ```
+
+
+### Deploy Containers Using YAML
+
+One of the most common Kubernetes object is the deployment object. The deployment object defines the container spec required, along with the name and labels used by other parts of Kubernetes to discover and connect to the application.
+
+Copy the following definition to the editor. The definition defines how to launch an application called webapp1 using the Docker Image katacoda/docker-http-server that runs on Port 80.
+
+```
+$ kubectl create -f ./yamlfile/sampledeployment/deployment.yaml
+
+$ kubectl get deployment
+
+$ kubectl describe deployment webapp1
+```
+
+Kubernetes has powerful networking capabilities that control how applications communicate. These networking configurations can also be controlled via YAML.
+
+Copy the Service definition to the editor. The Service selects all applications with the label webapp1. As multiple replicas, or instances, are deployed, they will be automatically load balanced based on this common label. The Service makes the application available via a NodePort.
+
+```
+$ kubectl create -f service.yaml
+
+$ kubectl get svc
+
+$ kubectl describe svc webapp1-svc
+
+$ curl host01:30080
+```
