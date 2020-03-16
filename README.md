@@ -135,4 +135,22 @@ $ curl host01:30080
 ```
 ### Scale YAML Deployment
 
-Update the deployment.yaml file to increase the number of instances running. For example, the file should look like this:
+Update the deployment.yaml file to increase the number of instances running. For example, the file should look like this: **replicas: 4**
+
+Updates to existing definitions are applied using kubectl apply. To scale the number of replicas, deploy the updated YAML file using
+
+```
+$ kubectl apply -f deployment.yaml
+
+$ kubectl get deployment
+
+$ kubectl get pods
+```
+
+As all the Pods have the same label selector, they'll be load balanced behind the Service NodePort deployed.
+
+Issuing requests to the port will result in different containers processing the request
+
+```
+$ curl host01:30080
+```
