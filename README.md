@@ -110,6 +110,8 @@ One of the most common Kubernetes object is the deployment object. The deploymen
 
 Copy the following definition to the editor. The definition defines how to launch an application called webapp1 using the Docker Image katacoda/docker-http-server that runs on Port 80.
 
+[deployment.yaml](https://github.com/sujithmarlabs/Kubernetes/blob/5f7b30e24d9ad6da6bf164646eeed1e611f36681/yamlfile/sampledeployment/deployment.yaml)
+
 ```
 $ kubectl create -f ./yamlfile/sampledeployment/deployment.yaml
 
@@ -131,3 +133,6 @@ $ kubectl describe svc webapp1-svc
 
 $ curl host01:30080
 ```
+### Scale YAML Deployment
+
+Update the deployment.yaml file to increase the number of instances running. For example, the file should look like this:
