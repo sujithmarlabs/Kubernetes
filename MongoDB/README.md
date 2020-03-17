@@ -517,7 +517,7 @@ EOF
 
 ### Links
 
-(Install Minikube)[https://gist.github.com/gonzaloplaza/f62fdcfdb6aac3d15a0fe0d750715729]
-(MongoDB RS)[https://maruftuhin.com/blog/mongodb-replica-set-on-kubernetes/]
-(MongoDB RS Another)[http://pauldone.blogspot.com/2017/06/deploying-mongodb-on-kubernetes-gke25.html]
-(MongoDB Backup)[https://dev.to/jmarhee/mongodb-backups-with-kubernetes-jobs-2n62]
+1. (Install Minikube)[https://gist.github.com/gonzaloplaza/f62fdcfdb6aac3d15a0fe0d750715729]
+2. (MongoDB RS)[https://maruftuhin.com/blog/mongodb-replica-set-on-kubernetes/]
+3. (MongoDB RS Another)[http://pauldone.blogspot.com/2017/06/deploying-mongodb-on-kubernetes-gke25.html]
+4. (MongoDB Backup)[https://dev.to/jmarhee/mongodb-backups-with-kubernetes-jobs-2n62]
