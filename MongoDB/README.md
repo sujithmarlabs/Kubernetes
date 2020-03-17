@@ -146,7 +146,7 @@ spec:
       resources:
         requests:
           storage: 1Gi
-EOF    
+EOF
 ```
 Now Deploy the Yaml
 
@@ -436,7 +436,6 @@ $ kubectl run -it --rm --restart=Never mongo-cli --image=mongo --command -- /bin
 > rs.slaveOk()
 > db.testcoll.find();
 ```
-
 
 ### Links
 
