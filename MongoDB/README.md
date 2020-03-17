@@ -147,7 +147,6 @@ spec:
         requests:
           storage: 1Gi
 EOF    
-
 ```
 Now Deploy the Yaml
 
@@ -159,6 +158,12 @@ $ kubectl create -f ./replica-sets/mongodb-rc.yaml
 ### Wait for Pod running and PVC
 
 ```
+$ kubectl get pods
+NAME       READY   STATUS    RESTARTS   AGE
+mongod-0   1/1     Running   0          49s
+mongod-1   1/1     Running   0          18s
+mongod-2   1/1     Running   0          13s
+
 $ kubectl get all
 NAME           READY   STATUS    RESTARTS   AGE
 pod/mongod-0   1/1     Running   0          5m13s
@@ -321,6 +326,19 @@ MainRepSet:PRIMARY> db.getSiblingDB("admin").createUser({
  });
 
 ```
+**Output is like this**
+
+```
+Successfully added user: {
+        "user" : "main_admin",
+        "roles" : [
+                {
+                        "role" : "root",
+                        "db" : "admin"
+                }
+        ]
+}
+```
 
 ### Insert Data
 
@@ -341,7 +359,7 @@ Insert Data into mongod-0 pod.
 ```
 
 ### Verify Cluster Data
-exec into Secondary Pod (here, mongo-1)
+**exec** into Secondary Pod (here, mongo-1)
 
 ```
 $ kubectl exec -it mongod-1 -c mongod-container bash
@@ -403,6 +421,20 @@ $ kubectl exec -it mongod-1 -c mongod-container bash
 > rs.status();
 > exit
 # exit
+```
+
+### Test Connectivity
+
+Test the connectivity by creating a temporary pod in the **default** namespace
+
+```
+$ kubectl run -it --rm --restart=Never mongo-cli --image=mongo --command -- /bin/bash
+# mongo "mongodb://mongod-0.mongodb-service.default.svc.cluster.local,mongod-1.mongodb-service.default.svc.cluster.local,mongod-2.mongodb-service.default.svc.cluster.local:27017/test"
+
+> db.getSiblingDB('admin').auth("main_admin", "abc123");
+> use test;
+> rs.slaveOk()
+> db.testcoll.find();
 ```
 
 
