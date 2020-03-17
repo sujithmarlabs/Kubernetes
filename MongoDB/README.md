@@ -437,8 +437,87 @@ $ kubectl run -it --rm --restart=Never mongo-cli --image=mongo --command -- /bin
 > db.testcoll.find();
 ```
 
+
+
+# Cron Job For MongoDB
+
+
+```
+$ cat << EOF > ./replica-sets/mongodump_pvc.yaml
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: mongo-dump-pv-volume
+  labels:
+    type: local
+    app: mongo-dump
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/kube-data/mongo-dumps"
+    type: DirectoryOrCreate
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mongo-dump-pv-claim
+  labels:
+    app: postgres
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+EOF
+
+$ kubectl create -f ./replica-sets/mongodump_pvc.yaml
+
+
+$ cat << EOF > ./replica-sets/mongodump_src.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongodb-backup
+  labels:
+    app: mongo-dump
+spec:
+  backoffLimit: 5
+  activeDeadlineSeconds: 100
+  template:
+    spec:
+      containers:
+      - name: mongodump
+        image: mongo
+        command: ["mongodump","--host","mongod-0.mongodb-service.default.svc.cluster.local:27017","--db","test", -u "main_admin" -p "abc123" --authenticationDatabase "admin"]
+        volumeMounts:
+          - mountPath: dump
+            name: mongo-dumps
+      volumes:
+      - name: mongo-dumps
+        persistentVolumeClaim:
+          claimName: mongo-dump-pv-claim
+      restartPolicy: OnFailure
+EOF      
+
+ $ kubectl create -f ./replica-sets/mongodump_src.yaml
+
+ $ kubectl delete -f ./replica-sets/mongodump_src.yaml
+
+ $ kubectl get pods -l app=mongo-dump
+
+ $ kubectl logs $POD_NAME
+```
+
+
 ### Links
 
 (Install Minikube)[https://gist.github.com/gonzaloplaza/f62fdcfdb6aac3d15a0fe0d750715729]
 (MongoDB RS)[https://maruftuhin.com/blog/mongodb-replica-set-on-kubernetes/]
 (MongoDB RS Another)[http://pauldone.blogspot.com/2017/06/deploying-mongodb-on-kubernetes-gke25.html]
+(MongoDB Backup)[https://dev.to/jmarhee/mongodb-backups-with-kubernetes-jobs-2n62]
